@@ -1,0 +1,194 @@
+﻿@model IEnumerable<ContaPontos2.Models.Pontos>
+@{
+    ViewBag.Title = "Index";
+}
+@*<link href="@Url.Content("~/Content/style.css")" rel="stylesheet" type="text/css" />*@
+@*<link href="../../Content/jquery-ui-1.8.21.custom.css" rel="stylesheet" type="text/css" />*@
+<link href="../../Scripts/css/bootstrap.css" rel="stylesheet" type="text/css" />
+<link href="../../Scripts/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<script src="../../Scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
+@*<script src="../../Scripts/jquery-ui-1.8.21.custom.min.js" type="text/javascript"></script>*@
+<script src="../../Scripts/js/bootstrap.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var idSprint = $("#listaSprintView").find(':selected').text();
+        var idSemana = $("#listaSemanaView").find(':selected').text();
+
+        $('#btnAtualizar').click(function () {
+            var idSprint = $("#listaSprintView").find(':selected').text();
+            var idSemana = $("#listaSemanaView").find(':selected').text();
+            $("#btnAtualizar").val(idSprint + ";" + idSemana);
+        });
+
+        $('.row').click(function () {
+            var d = $(this).attr('id');
+            var sprint = idSprint;
+            var semana = idSemana;
+            $.post("/Pontos/EnviarDados", { nome: d, sprint: sprint, semana: semana },
+                        function (data) {
+                            $(data).each(function (i, val) {
+                                $("#users tbody").append("<tr>" +
+                                                    	 "<td>" + data[i]["Os"] + "</td>" +
+                                                    	 "<td>" + data[i]["QtdePontos"] + "</td>" +
+                                                         "<td>" + data[i]["QtdeTestes"] + "</td>" +
+                                                         "<td>" + data[i]["Situacao"] + "</td>" +
+                                                    	 "</tr>");
+                            });
+                        });
+            $('#myModal').modal('show');
+
+        });
+
+        $("#btnClose").click(function () {
+            $('#users > tbody').empty();
+        });
+
+    });
+</script>
+@using (Html.BeginForm())
+{ 
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span3">
+                    <div class="well sidebar-nav">
+                        <ul class="nav nav-list">
+                            Total já testado: @ViewBag.TotalTestado
+                        </ul>
+                    </div>
+                </div>
+                <div class="span3">
+                    <div class="well sidebar-nav">
+                        <ul class="nav nav-list">
+                            Total Desenvolvido: @ViewBag.TotalDesenvolvido
+                        </ul>
+                    </div>
+                </div>
+                <div class="span3">
+                    <div class="well sidebar-nav">
+                        <ul class="nav nav-list">
+                            Número de Cartões: @ViewBag.NumeroCartoes
+                        </ul>
+                    </div>
+                </div>
+                <div class="span3">
+                    <div class="well sidebar-nav">
+                        <ul class="nav nav-list">
+                            Número de Testes: @ViewBag.NumeroTestes
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </head>
+    </html>
+    <div>
+        <table class="table-striped">
+            <tr>
+                <td id="listaSprintView" class="span1">
+                    Sprint: @Html.DropDownList("ListaSprint")
+                </td>
+                <td id="listaSemanaView" class="span1">
+                    Semana: @Html.DropDownList("ListaSemana")
+                </td>
+                <td>
+                    <button class="btn btn-primary" id="btnAtualizar" name="texto" type="submit" value="">
+                        Atualizar</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+}
+</p>
+<div class="modal hide fade" id="myModal">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+            ×</button>
+        <h3>
+            Detalhes</h3>
+    </div>
+    <div class="modal-body">
+        <table id="users">
+            <thead>
+                <tr>
+                    <th>
+                        Os
+                    </th>
+                    <th>
+                        Qtde. Pontos
+                    </th>
+                    <th>
+                        Qtde. Testes
+                    </th>
+                    <th>
+                        Situação
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <a id="btnClose" href="#" class="btn" data-dismiss="modal">Close</a>
+    </div>
+</div>
+<div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope='col'>
+                    Programador
+                </th>
+                <th scope='col'>
+                    Não Testados
+                </th>
+                <th scope='col'>
+                    Quebra
+                </th>
+                <th scope='col'>
+                    Testes Unitarios
+                </th>
+                <th scope='col'>
+                    Meta Individual
+                </th>
+                <th scope='col'>
+                    Desenvolvido
+                </th>
+                <th scope='col'>
+                    Complexidade
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="row" id=@Html.DisplayFor(modelItem => item.Programador)>
+                    @Html.DisplayFor(modelItem => item.Programador)
+                </td>
+                <td class="row" id=@Html.DisplayFor(modelItem => item.Programador)>
+                    @Html.DisplayFor(modelItem => item.PontosNaoTestados)
+                </td>
+                <td class="row" id=@Html.DisplayFor(modelItem => item.Programador)>
+                    @Html.DisplayFor(modelItem => item.PontosQuebra)
+                </td>
+                <td class="row" id=@Html.DisplayFor(modelItem => item.Programador)>
+                    @Html.DisplayFor(modelItem => item.TestesUnitarios)
+                </td>
+                <td class="row" id=@Html.DisplayFor(modelItem => item.Programador)>
+                    @Html.DisplayFor(modelItem => item.MetaIndividual)
+                </td>
+                <td class="row" id=@Html.DisplayFor(modelItem => item.Programador)>
+                    @Html.DisplayFor(modelItem => item.PontosDesenvolvidos)
+                </td>
+                <td class="row" id=@Html.DisplayFor(modelItem => item.Programador)>
+                    @Html.DisplayFor(modelItem => item.Complexidade)
+                </td>
+            </tr>
+        }
+    </table>
+</div>
